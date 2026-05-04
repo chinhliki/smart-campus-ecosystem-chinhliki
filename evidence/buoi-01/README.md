@@ -6,10 +6,10 @@ Thư mục này dùng để nộp minh chứng thiết lập môi trường lab.
 
 - Họ tên: Đinh Ngọc Chính
 - Mã sinh viên: 1771020103
-- Nhóm:
-- Vai trò dự kiến trong nhóm:
-- Hệ điều hành:
-- Ghi chú:
+- Nhóm: 6B
+- Vai trò dự kiến trong nhóm: Backend Developer (phụ trách Core Business Service)
+- Hệ điều hành: Windows 10 (PowerShell + Docker Desktop)
+- Ghi chú: Đã cài đặt đầy đủ Git, Docker, Docker Compose, Node.js và Python. Docker hoạt động bình thường (đã test với hello-world).
 
 ## Các file minh chứng nên có
 
@@ -36,3 +36,4 @@ Windows:
 ```powershell
 .\scripts\collect_session01_evidence.ps1
 ```
+
