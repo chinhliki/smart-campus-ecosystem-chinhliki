@@ -351,7 +351,6 @@ Core Business Service là thành phần trung tâm của hệ thống Smart Camp
 Service này chịu trách nhiệm xử lý toàn bộ logic nghiệp vụ, điều phối dữ liệu giữa các service và đảm bảo luồng hoạt động của hệ thống diễn ra ổn định.
 
 Việc tách hệ thống theo mô hình microservice giúp:
-
 * Dễ mở rộng
 * Dễ bảo trì
 * Tăng khả năng chịu tải
