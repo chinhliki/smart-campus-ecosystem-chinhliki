@@ -320,23 +320,13 @@ Các service hỗ trợ:
 ## Bước 1
 
 User gửi request từ frontend.
-
----
-
 ## Bước 2
-
 API Gateway tiếp nhận request.
 
----
-
 ## Bước 3
-
 Auth Service xác thực người dùng.
 
----
-
 ## Bước 4
-
 Core Business Service:
 
 * Kiểm tra dữ liệu
@@ -344,36 +334,20 @@ Core Business Service:
 * Lưu dữ liệu
 * Điều phối service
 
----
-
 ## Bước 5
-
 Dữ liệu được lưu vào PostgreSQL và Redis.
 
----
-
 ## Bước 6
-
 Core gửi event sang RabbitMQ.
 
----
-
 ## Bước 7
-
 Notification Service gửi thông báo tới người dùng.
 
----
-
 ## Bước 8
-
 Analytics Service nhận dữ liệu để phân tích.
 
----
-
 # 11. Kết luận
-
 Core Business Service là thành phần trung tâm của hệ thống Smart Campus Ecosystem.
-
 Service này chịu trách nhiệm xử lý toàn bộ logic nghiệp vụ, điều phối dữ liệu giữa các service và đảm bảo luồng hoạt động của hệ thống diễn ra ổn định.
 
 Việc tách hệ thống theo mô hình microservice giúp:
