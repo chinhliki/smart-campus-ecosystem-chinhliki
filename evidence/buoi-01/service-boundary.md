@@ -1,117 +1,154 @@
-# Service Boundary của nhóm
+# SERVICE BOUNDARY – CORE BUSINESS SERVICE
 
 ## 1. Thông tin nhóm
 
-* **Tên nhóm:** (6B)
+* **Tên nhóm:** 6B
 * **Lớp:** CNTT 17-12
 * **Thành viên:** Trương Hữu Vinh, Đỗ Quang Minh, Đinh Ngọc Chính, Hà Quang Dự
-* **Service nhóm phụ trách:** Core Business Service (Xử lý nghiệp vụ trung tâm)
-* **Sản phẩm tổng thể của lớp:** Hệ thống Smart Campus Ecosystem (hệ sinh thái campus thông minh)
+* **Service phụ trách:** Core Business Service
+* **Sản phẩm tổng thể:** Smart Campus Ecosystem (Hệ sinh thái Campus thông minh)
 
 ---
 
-## 2. Actor
+# 2. Giới thiệu Service
 
-Các đối tượng tương tác với service:
+Nhóm phụ trách xây dựng **Core Business Service** – service trung tâm của hệ thống Smart Campus Ecosystem.
 
-* **Sinh viên**
+Service này đóng vai trò:
 
-  * Đăng ký khóa học
-  * Xem thông tin khóa học
-  * Gửi yêu cầu nghiệp vụ
+* Xử lý logic nghiệp vụ chính
+* Điều phối dữ liệu giữa các service
+* Kiểm tra điều kiện nghiệp vụ
+* Quản lý dữ liệu khóa học và đăng ký
+* Tổng hợp dữ liệu từ các hệ thống AI, IoT và Access Control
 
-* **Giảng viên**
-
-  * Tạo / cập nhật nội dung khóa học
-  * Xem danh sách sinh viên
-
-* **Admin**
-
-  * Quản lý hệ thống
-  * Phê duyệt / kiểm soát dữ liệu
-
-* **Các service khác (internal)**
-
-  * Auth Service (xác thực)
-  * Notification Service (gửi thông báo)
+Core Business Service được xem là “bộ não xử lý nghiệp vụ” của toàn bộ hệ thống.
 
 ---
 
-## 3. System Boundary
+# 3. Actor
 
-### Nhóm em xây phần nào?
+Các đối tượng tương tác với service gồm:
 
-Nhóm phụ trách **Core Business Service** – trung tâm xử lý logic nghiệp vụ
-
----
-
-### Phần nhóm kiểm soát:
-
-* Xử lý logic nghiệp vụ chính của hệ thống
-* Kiểm tra dữ liệu đầu vào hợp lệ
-* Xử lý đăng ký khóa học
-* Quản lý trạng thái nghiệp vụ
-* Tương tác với database
-* Gọi các service khác khi cần
+| Actor                | Vai trò                                  |
+| -------------------- | ---------------------------------------- |
+| Sinh viên            | Đăng ký khóa học, xem thông tin khóa học |
+| Giảng viên           | Tạo/cập nhật nội dung khóa học           |
+| Admin                | Quản lý hệ thống và dữ liệu              |
+| Auth Service         | Xác thực người dùng                      |
+| Notification Service | Gửi email/thông báo                      |
+| Analytics Service    | Phân tích dữ liệu                        |
 
 ---
 
-### Phần nhóm chỉ tích hợp:
+# 4. System Boundary
 
-* Auth Service (xác thực người dùng)
-* Notification Service (gửi email/thông báo)
-* API Gateway (định tuyến request)
-* Frontend (Web/Mobile)
+## 4.1 Phần nhóm phụ trách
 
----
-
-## 4. Service Boundary
-
-### Service của nhóm có trách nhiệm gì?
+Core Business Service chịu trách nhiệm:
 
 * Xử lý logic nghiệp vụ trung tâm
+* Kiểm tra dữ liệu đầu vào
+* Xử lý đăng ký khóa học
+* Quản lý trạng thái nghiệp vụ
 * Điều phối luồng xử lý giữa các service
-* Quản lý dữ liệu nghiệp vụ (course, enrollment, user action)
-* Kiểm tra điều kiện nghiệp vụ (ví dụ: đủ điều kiện đăng ký)
-* Trả kết quả xử lý cho client hoặc service khác
+* Tương tác với database
+* Gửi event sang các service khác
 
 ---
 
-### Service KHÔNG làm gì?
+## 4.2 Phần nhóm KHÔNG phụ trách
 
-* Không xử lý giao diện người dùng (UI)
-* Không xác thực người dùng (do Auth Service đảm nhiệm)
-* Không gửi email/thông báo (do Notification Service đảm nhiệm)
-* Không trực tiếp quản lý API Gateway
+Core Business Service không xử lý:
+
+* Giao diện người dùng (Frontend)
+* Xác thực tài khoản
+* Gửi email/thông báo trực tiếp
+* Điều hướng request tại API Gateway
+* Phân tích dữ liệu chuyên sâu
+
+Các chức năng trên được thực hiện bởi các service chuyên biệt khác.
 
 ---
 
-## 5. Input / Output
+# 5. Service Boundary
 
-### Input
+## 5.1 Trách nhiệm chính của service
 
-* HTTP request từ client (JSON)
+Core Business Service có nhiệm vụ:
+
+* Quản lý dữ liệu nghiệp vụ
+* Điều phối xử lý giữa các service
+* Kiểm tra điều kiện nghiệp vụ
+* Lưu trữ và cập nhật dữ liệu
+* Trả kết quả xử lý cho client
+* Kích hoạt xử lý bất đồng bộ thông qua Message Queue
+
+---
+
+## 5.2 Ví dụ nghiệp vụ
+
+### Ví dụ: Sinh viên đăng ký khóa học
+
+Quy trình xử lý:
+
+1. Sinh viên gửi request đăng ký
+2. API Gateway chuyển request vào hệ thống
+3. Auth Service xác thực người dùng
+4. Core Business Service kiểm tra:
+
+   * Sinh viên có đủ điều kiện không
+   * Môn học còn chỗ hay không
+5. Hệ thống lưu dữ liệu đăng ký
+6. Gửi event sang Notification Service
+7. Trả kết quả về cho client
+
+---
+
+# 6. Input / Output
+
+## 6.1 Input
+
+Dữ liệu đầu vào gồm:
+
+* HTTP Request từ client
 * Request từ các service khác
-* Dữ liệu xác thực (token từ Auth Service)
+* Token xác thực từ Auth Service
+* Dữ liệu từ IoT / AI / Access Control
 
-Ví dụ:
+### Ví dụ request
 
-* Đăng ký khóa học
-* Lấy danh sách khóa học
-* Gửi yêu cầu xử lý nghiệp vụ
-
----
-
-### Output
-
-* JSON response trả về client
-* Trạng thái xử lý (success / fail)
-* Dữ liệu nghiệp vụ (course, user, enrollment)
-* Gửi event sang service khác (nếu có)
+```json
+POST /enroll
+{
+  "studentId": 1,
+  "courseId": 10
+}
+```
 
 ---
 
-## 6. API dự kiến
+## 6.2 Output
+
+Dữ liệu đầu ra gồm:
+
+* JSON Response
+* Trạng thái xử lý
+* Dữ liệu khóa học
+* Event gửi sang service khác
+
+### Ví dụ response
+
+```json
+{
+  "status": "success",
+  "message": "Enroll successful"
+}
+```
+
+---
+
+# 7. API dự kiến
 
 | Method | Endpoint      | Mục đích                    |
 | ------ | ------------- | --------------------------- |
@@ -126,117 +163,223 @@ Ví dụ:
 
 ---
 
-## 7. Phụ thuộc service khác
+# 8. Phụ thuộc giữa các Service
 
-### Service này kết nối tới
+## 8.1 Service kết nối đến Core Business Service
 
-| Service               | Mục đích                                                                    |
-| --------------------- | --------------------------------------------------------------------------- |
-| IoT Ingestion Service | Nhận dữ liệu cảm biến (nhiệt độ, độ ẩm, trạng thái thiết bị, v.v.)          |
-| Access Gate Service   | Nhận sự kiện ra/vào (check-in/check-out, quẹt thẻ, nhận diện)               |
-| AI Vision Service     | Nhận kết quả phân tích hình ảnh (nhận diện khuôn mặt, phát hiện bất thường) |
-| Notification Service  | Gửi cảnh báo hoặc thông báo đến người dùng (email, app, SMS)                |
-| Analytics Service     | Cung cấp dữ liệu phục vụ phân tích, ra quyết định và cảnh báo nâng cao      |
+| Service             | Mục đích                      |
+| ------------------- | ----------------------------- |
+| API Gateway         | Chuyển tiếp request từ client |
+| Frontend Web/Mobile | Gửi yêu cầu nghiệp vụ         |
+| Internal Services   | Gửi request xử lý nghiệp vụ   |
 
 ---
 
-### Service khác gọi đến service này
+## 8.2 Core Business Service kết nối tới
 
-| Service                 | Mục đích                                                             |
-| ----------------------- | -------------------------------------------------------------------- |
-| API Gateway             | Chuyển tiếp request từ client đến Core Business Service              |
-| Frontend (Web/Mobile)   | Gửi yêu cầu nghiệp vụ (đăng ký, truy vấn dữ liệu, thao tác hệ thống) |
-| Các service nội bộ khác | Gửi request cần xử lý logic nghiệp vụ trung tâm                      |
-
----
-
-### Vai trò của Core Business Service trong hệ thống
-
-* Là trung tâm xử lý và điều phối dữ liệu từ nhiều nguồn khác nhau
-* Tổng hợp dữ liệu từ IoT, AI, Access để đưa ra quyết định nghiệp vụ
-* Kích hoạt các hành động như gửi cảnh báo thông qua Notification Service
-* Cung cấp dữ liệu đã xử lý cho Analytics Service phục vụ phân tích
+| Service               | Vai trò                         |
+| --------------------- | ------------------------------- |
+| Auth Service          | Xác thực người dùng             |
+| IoT Ingestion Service | Nhận dữ liệu cảm biến           |
+| Access Gate Service   | Nhận dữ liệu check-in/check-out |
+| AI Vision Service     | Nhận kết quả AI                 |
+| Notification Service  | Gửi thông báo                   |
+| Analytics Service     | Phân tích dữ liệu               |
 
 ---
 
+# 9. Kiến trúc hệ thống Microservice
 
-## 8. Sơ đồ minh họa (Kiến trúc Microservice – Core Business)
+## 9.1 Sơ đồ kiến trúc
 
 ```mermaid
-flowchart LR
-    %% Actor
-    User[User / Client]
+flowchart TB
 
-    %% Gateway
-    Gateway[API Gateway]
+    %% =========================
+    %% CLIENT LAYER
+    %% =========================
+    subgraph CLIENT["Client Layer"]
+        U1[👨‍🎓 Sinh viên]
+        U2[👨‍🏫 Giảng viên]
+        U3[🛠️ Admin]
+    end
 
-    %% Core
-    Core[Core Business Service]
+    %% =========================
+    %% API GATEWAY
+    %% =========================
+    GW[🌐 API Gateway]
 
-    %% External Services (from section 7)
-    IoT[IoT Ingestion Service]
-    Access[Access Gate Service]
-    AI[AI Vision Service]
-    Noti[Notification Service]
-    Analytics[Analytics Service]
+    %% =========================
+    %% CORE BUSINESS
+    %% =========================
+    subgraph CORE["⚙️ Core Business Service"]
+        C1[📌 Xử lý Logic Nghiệp vụ]
+        C2[✅ Kiểm tra dữ liệu]
+        C3[📚 Quản lý khóa học]
+        C4[📝 Xử lý đăng ký]
+        C5[🔄 Điều phối Service]
+    end
 
-    %% Infra
-    DB[(PostgreSQL)]
-    Redis[(Redis Cache)]
-    MQ[(Message Queue - RabbitMQ)]
+    %% =========================
+    %% EXTERNAL SERVICES
+    %% =========================
+    subgraph EXT["🔗 External Services"]
+        AUTH[🔐 Auth Service]
+        IOT[📡 IoT Ingestion]
+        ACCESS[🚪 Access Gate]
+        AI[🤖 AI Vision]
+        NOTI[📩 Notification]
+        ANALYTICS[📊 Analytics]
+    end
 
-    %% Main flow
-    User --> Gateway
-    Gateway --> Core
+    %% =========================
+    %% INFRASTRUCTURE
+    %% =========================
+    subgraph INFRA["🗄️ Infrastructure"]
+        DB[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+        MQ[(RabbitMQ)]
+    end
 
-    %% Input data from systems
-    IoT --> Core
-    Access --> Core
-    AI --> Core
+    %% FLOW
+    U1 --> GW
+    U2 --> GW
+    U3 --> GW
 
-    %% Core processing
-    Core --> DB
-    Core --> Redis
+    GW --> AUTH
+    AUTH --> GW
 
-    %% Async event
-    Core --> MQ
-    MQ --> Noti
+    GW --> C1
 
-    %% Data for analytics
-    Core --> Analytics
+    IOT --> C1
+    ACCESS --> C1
+    AI --> C1
 
-    %% Response
-    Noti --> User
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    C4 --> C5
+
+    C5 --> DB
+    C5 --> REDIS
+    C5 --> MQ
+
+    MQ --> NOTI
+    C5 --> ANALYTICS
+
+    NOTI --> U1
+    NOTI --> U2
 ```
 
 ---
 
-### 🔍 Giải thích sơ đồ (ngắn gọn nhưng đủ điểm)
+## 9.2 Giải thích sơ đồ
 
-* **API Gateway**: tiếp nhận request từ người dùng và chuyển vào hệ thống
-* **Core Business Service**: trung tâm xử lý toàn bộ logic nghiệp vụ
-* **IoT / Access / AI Vision**: cung cấp dữ liệu đầu vào từ cảm biến, cổng ra vào, hệ thống AI
-* **PostgreSQL**: lưu trữ dữ liệu chính
-* **Redis**: cache tăng tốc xử lý
-* **RabbitMQ**: xử lý bất đồng bộ (event-driven)
-* **Notification Service**: gửi cảnh báo/thông báo đến người dùng
-* **Analytics Service**: nhận dữ liệu để phân tích và hỗ trợ ra quyết định
+### API Gateway
+
+Là cổng tiếp nhận request từ người dùng trước khi chuyển vào hệ thống microservice.
 
 ---
 
-### 🔥 Luồng hoạt động chính
+### Core Business Service
 
-1. User gửi request → API Gateway
-2. Gateway chuyển vào Core Service
-3. Core:
+Đóng vai trò trung tâm xử lý:
 
-   * Nhận thêm dữ liệu từ IoT / Access / AI
-   * Xử lý logic nghiệp vụ
-4. Core:
-
-   * Lưu DB + cache Redis
-   * Gửi event qua RabbitMQ
-5. Notification gửi cảnh báo cho User
-6. Analytics nhận dữ liệu để phân tích
+* Logic nghiệp vụ
+* Quản lý khóa học
+* Điều phối dữ liệu
+* Tương tác database
 
 ---
+
+### External Services
+
+Các service hỗ trợ:
+
+* Auth Service → xác thực người dùng
+* IoT Service → dữ liệu cảm biến
+* Access Gate → dữ liệu ra/vào
+* AI Vision → nhận diện AI
+* Notification → gửi thông báo
+* Analytics → phân tích dữ liệu
+
+---
+
+### Infrastructure
+
+| Thành phần | Vai trò           |
+| ---------- | ----------------- |
+| PostgreSQL | Lưu dữ liệu chính |
+| Redis      | Cache tăng tốc    |
+| RabbitMQ   | Xử lý bất đồng bộ |
+
+---
+
+# 10. Luồng hoạt động chính
+
+## Bước 1
+
+User gửi request từ frontend.
+
+---
+
+## Bước 2
+
+API Gateway tiếp nhận request.
+
+---
+
+## Bước 3
+
+Auth Service xác thực người dùng.
+
+---
+
+## Bước 4
+
+Core Business Service:
+
+* Kiểm tra dữ liệu
+* Xử lý logic nghiệp vụ
+* Lưu dữ liệu
+* Điều phối service
+
+---
+
+## Bước 5
+
+Dữ liệu được lưu vào PostgreSQL và Redis.
+
+---
+
+## Bước 6
+
+Core gửi event sang RabbitMQ.
+
+---
+
+## Bước 7
+
+Notification Service gửi thông báo tới người dùng.
+
+---
+
+## Bước 8
+
+Analytics Service nhận dữ liệu để phân tích.
+
+---
+
+# 11. Kết luận
+
+Core Business Service là thành phần trung tâm của hệ thống Smart Campus Ecosystem.
+
+Service này chịu trách nhiệm xử lý toàn bộ logic nghiệp vụ, điều phối dữ liệu giữa các service và đảm bảo luồng hoạt động của hệ thống diễn ra ổn định.
+
+Việc tách hệ thống theo mô hình microservice giúp:
+
+* Dễ mở rộng
+* Dễ bảo trì
+* Tăng khả năng chịu tải
+* Tách biệt trách nhiệm rõ ràng
+* Hỗ trợ phát triển độc lập giữa các nhóm
